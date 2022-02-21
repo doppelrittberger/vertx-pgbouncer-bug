@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+    <changeSet id="20220216-demo" author="doppelrittberger@web.de">
+        <createTable tableName="events">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" primaryKeyName="events_pk" unique="true" nullable="false"/>
+            </column>
+            <column name="stream_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stream_version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_id" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="unique_event_id_constraint"/>
+            </column>
+            <column name="event_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="publish_count" type="smallint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="handle_count" type="smallint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+
+

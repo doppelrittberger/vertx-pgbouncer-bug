@@ -1,0 +1,53 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    logging:
+      driver: local
+    networks:
+      - postgres
+    ports:
+      - 9099:5432
+    volumes:
+      - postgres-volume:/var/postgresql_data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+      - ./postgres-init/psql.conf:/etc/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql.conf -c log_connections=on -c shared_preload_libraries='pg_stat_statements' -c pg_stat_statements.track=all
+    environment:
+      - PGDATA=/var/postgresql_data
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_MULTIPLE_DATABASES=test
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  pgbouncer:
+    image: bitnami/pgbouncer:latest
+    logging:
+      driver: local
+    ports:
+      - 9100:6432
+    environment:
+      - POSTGRESQL_USERNAME=test
+      - POSTGRESQL_PASSWORD=test
+      - POSTGRESQL_DATABASE=test
+      - POSTGRESQL_HOST=postgres
+      - POSTGRESQL_PORT=5432
+      - PGBOUNCER_DATABASE=test
+      - PGBOUNCER_AUTH_TYPE=trust
+      - PGBOUNCER_POOL_MODE=transaction
+      - PGBOUNCER_IGNORE_STARTUP_PARAMETERS=extra_float_digits
+    networks:
+      - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-volume:
+networks:
+  postgres:
+    external: false
