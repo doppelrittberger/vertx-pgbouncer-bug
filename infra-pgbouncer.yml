@@ -7,17 +7,14 @@ services:
     networks:
       - postgres
     ports:
-      - 9099:5432
+      - 5432:5432
     volumes:
       - postgres-volume:/var/postgresql_data
-      - ./postgres-init:/docker-entrypoint-initdb.d
-      - ./postgres-init/psql.conf:/etc/postgresql.conf
-    command: postgres -c config_file=/etc/postgresql.conf -c log_connections=on -c shared_preload_libraries='pg_stat_statements' -c pg_stat_statements.track=all
     environment:
       - PGDATA=/var/postgresql_data
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
-      - POSTGRES_MULTIPLE_DATABASES=test
+      - POSTGRES_DB=test
       - POSTGRES_HOST_AUTH_METHOD=trust
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U test" ]
@@ -29,7 +26,7 @@ services:
     logging:
       driver: local
     ports:
-      - 9100:6432
+      - 6432:6432
     environment:
       - POSTGRESQL_USERNAME=test
       - POSTGRESQL_PASSWORD=test
